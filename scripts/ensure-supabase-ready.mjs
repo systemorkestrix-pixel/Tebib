@@ -4,6 +4,11 @@ import { Client } from 'pg';
 
 const requiredPublicEnv = ['VITE_SUPABASE_URL', 'VITE_SUPABASE_ANON_KEY'];
 const databaseUrl = process.env.SUPABASE_DB_URL || process.env.DATABASE_URL;
+const isVercelBuild = process.env.VERCEL === '1';
+const skipSchemaCheck = process.env.SKIP_SUPABASE_SCHEMA_CHECK === '1';
+const strictSchemaCheck = ['1', 'true', 'yes'].includes(
+  String(process.env.STRICT_SUPABASE_BUILD || '').toLowerCase(),
+);
 const requiredTables = [
   'public.categories',
   'public.products',
@@ -87,6 +92,16 @@ async function main() {
     fail(
       `Missing required environment variables for build: ${missingEnv.join(', ')}.`,
     );
+  }
+
+  if (skipSchemaCheck) {
+    console.log('Skipping Supabase schema check because SKIP_SUPABASE_SCHEMA_CHECK=1.');
+    return;
+  }
+
+  if (isVercelBuild && !strictSchemaCheck) {
+    console.log('Skipping Supabase schema bootstrap on Vercel build. Public env is present and strict schema check is disabled.');
+    return;
   }
 
   if (!databaseUrl) {
