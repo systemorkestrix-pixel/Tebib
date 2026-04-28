@@ -1,0 +1,2414 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' https: data: blob:; connect-src 'self' https: wss:; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <title>لوحة التحكم</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .icon-sprite {
+      position: absolute;
+      width: 0;
+      height: 0;
+      overflow: hidden;
+    }
+
+    .admin-container {
+      --admin-ink: #111111;
+      --admin-ink-soft: rgba(17, 17, 17, 0.12);
+      --admin-ink-strong: rgba(17, 17, 17, 0.2);
+      --admin-gold: #c59a33;
+      --admin-gold-soft: rgba(197, 154, 51, 0.16);
+      --admin-gold-wash: rgba(197, 154, 51, 0.08);
+      width: min(calc(100vw - 28px), 1320px);
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: 18px 14px 40px;
+    }
+
+    .dashboard-section,
+    #productsTab,
+    #categoriesTab,
+    #ordersTab,
+    #settingsTab {
+      width: 100%;
+      min-width: 0;
+    }
+
+    .admin-header,
+    .auth-section,
+    .panel-card,
+    .tabs,
+    .table-responsive.panel-card {
+      width: 100%;
+      min-width: 0;
+    }
+
+    .admin-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+      gap: 16px;
+      margin-bottom: 20px;
+      padding: 18px 20px;
+      border-radius: 24px;
+      background:
+        linear-gradient(135deg, rgba(17, 17, 17, 0.04), rgba(197, 154, 51, 0.1)),
+        var(--surface-color);
+      border: 1px solid var(--admin-ink-strong);
+      box-shadow:
+        0 16px 32px rgba(17, 17, 17, 0.08),
+        inset 0 0 0 1px var(--admin-gold-soft);
+    }
+
+    .admin-title-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .admin-title-wrap p {
+      margin: 0;
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .admin-header-actions {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .header-icon-btn {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 46px;
+      min-height: 46px;
+      padding: 0 14px;
+      border-radius: 16px;
+      border: 1px solid rgba(17, 17, 17, 0.12);
+      background: rgba(255, 255, 255, 0.94);
+      color: var(--admin-ink);
+      text-decoration: none;
+      box-shadow:
+        0 12px 24px rgba(17, 17, 17, 0.08),
+        inset 0 0 0 1px var(--admin-gold-soft);
+    }
+
+    .header-icon-btn .ui-icon {
+      width: 19px;
+      height: 19px;
+    }
+
+    .header-badge {
+      position: absolute;
+      top: -6px;
+      inset-inline-end: -6px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 22px;
+      height: 22px;
+      padding: 0 6px;
+      border-radius: 999px;
+      background: #c62828;
+      color: white;
+      font-size: 11px;
+      font-weight: 800;
+      box-shadow: 0 8px 16px rgba(198, 40, 40, 0.28);
+    }
+
+    .auth-section,
+    .dashboard-section {
+      padding: 0;
+      margin-bottom: 20px;
+    }
+
+    .auth-section {
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(255, 251, 241, 0.9));
+      padding: 24px;
+      border-radius: 24px;
+      box-shadow:
+        0 20px 42px rgba(17, 17, 17, 0.08),
+        inset 0 0 0 1px var(--admin-gold-soft);
+      border: 1px solid var(--admin-ink-strong);
+    }
+
+    .auth-card {
+      width: min(100%, 560px);
+      margin: 0 auto;
+      display: grid;
+      gap: 18px;
+    }
+
+    .auth-note {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 14px 16px;
+      border-radius: 18px;
+      border: 1px solid var(--admin-ink-strong);
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(255, 248, 233, 0.96));
+      box-shadow:
+        0 14px 28px rgba(17, 17, 17, 0.05),
+        inset 0 0 0 1px var(--admin-gold-soft);
+    }
+
+    .auth-note .ui-icon {
+      margin-top: 2px;
+      color: var(--admin-gold);
+    }
+
+    .auth-note p {
+      display: none;
+    }
+
+    .auth-note-text {
+      font-size: 13px;
+      line-height: 1.7;
+      color: var(--text-secondary);
+    }
+
+    .dashboard-section {
+      background: transparent;
+      display: grid;
+      gap: 20px;
+    }
+
+    .section-title {
+      margin-bottom: 10px;
+    }
+
+    .section-title h3 {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 0;
+      font-size: 22px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .form-group {
+      margin-bottom: 0;
+    }
+
+    .form-group.full-width {
+      grid-column: 1 / -1;
+    }
+
+    .field-label,
+    .toggle-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .ui-icon {
+      width: 18px;
+      height: 18px;
+      flex: 0 0 auto;
+      color: currentColor;
+    }
+
+    .field-label .ui-icon {
+      color: var(--admin-gold);
+    }
+
+    .form-control {
+      width: 100%;
+      min-height: 50px;
+      padding: 13px 14px;
+      border: 1px solid var(--admin-ink-strong);
+      border-radius: 14px;
+      font-family: inherit;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(255, 250, 244, 0.92));
+      transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+      box-shadow:
+        inset 0 1px 2px rgba(17, 17, 17, 0.04),
+        inset 0 0 0 1px rgba(197, 154, 51, 0.08);
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: var(--admin-gold);
+      box-shadow:
+        0 0 0 4px rgba(197, 154, 51, 0.16),
+        inset 0 1px 2px rgba(17, 17, 17, 0.04);
+    }
+
+    .form-help {
+      display: block;
+      margin-top: 6px;
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .file-picker {
+      display: grid;
+      gap: 8px;
+    }
+
+    .file-input {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .file-picker-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      border-radius: 16px;
+      border: 1px dashed var(--admin-gold);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(255, 249, 237, 0.92));
+    }
+
+    .file-picker-trigger {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-width: 144px;
+      min-height: 42px;
+      padding: 0 14px;
+      border-radius: 12px;
+      background: var(--admin-ink);
+      color: white;
+      font-weight: 700;
+      cursor: pointer;
+      border: 1px solid var(--admin-ink);
+      box-shadow: inset 0 0 0 1px rgba(197, 154, 51, 0.32);
+      transition: transform 0.15s ease, opacity 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .file-picker-trigger:hover {
+      opacity: 0.96;
+      box-shadow:
+        0 10px 22px rgba(17, 17, 17, 0.12),
+        inset 0 0 0 1px rgba(197, 154, 51, 0.42);
+    }
+
+    .file-picker-name {
+      min-width: 0;
+      font-size: 13px;
+      color: var(--text-secondary);
+      overflow-wrap: anywhere;
+    }
+
+    .admin-image-placeholder {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 50px;
+      min-height: 50px;
+      padding: 0 8px;
+      border-radius: 12px;
+      border: 1px dashed var(--admin-ink-strong);
+      background: rgba(255, 249, 237, 0.92);
+      color: var(--text-secondary);
+      font-size: 11px;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .admin-toast-stack {
+      position: fixed;
+      top: 18px;
+      inset-inline-start: 18px;
+      z-index: 220;
+      display: grid;
+      gap: 10px;
+      width: min(360px, calc(100vw - 24px));
+      pointer-events: none;
+    }
+
+    .admin-toast {
+      display: grid;
+      gap: 4px;
+      padding: 14px 16px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.98);
+      border: 1px solid var(--admin-ink-strong);
+      box-shadow:
+        0 18px 38px rgba(15, 23, 15, 0.16),
+        inset 0 0 0 1px var(--admin-gold-soft);
+      pointer-events: auto;
+    }
+
+    .admin-toast-success {
+      border-inline-start: 4px solid var(--secondary-green);
+    }
+
+    .admin-toast-error {
+      border-inline-start: 4px solid var(--text-error);
+    }
+
+    .admin-toast-warning {
+      border-inline-start: 4px solid var(--accent-yellow);
+    }
+
+    .admin-toast-info {
+      border-inline-start: 4px solid var(--primary-green);
+    }
+
+    .admin-toast-title {
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--text-primary);
+    }
+
+    .admin-toast-message {
+      margin: 0;
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .admin-confirm {
+      position: fixed;
+      inset: 0;
+      z-index: 230;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .admin-confirm-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(15, 23, 15, 0.48);
+      backdrop-filter: blur(8px);
+    }
+
+    .admin-confirm-dialog {
+      position: relative;
+      z-index: 1;
+      width: min(100%, 440px);
+      padding: 22px;
+      border-radius: 24px;
+      background: rgba(255, 255, 255, 0.99);
+      border: 1px solid var(--admin-ink-strong);
+      box-shadow:
+        0 26px 56px rgba(15, 23, 15, 0.18),
+        inset 0 0 0 1px var(--admin-gold-soft);
+    }
+
+    .admin-confirm-dialog h3 {
+      margin: 0 0 6px;
+      font-size: 22px;
+    }
+
+    .admin-confirm-dialog p {
+      margin: 0;
+      color: var(--text-secondary);
+      font-size: 14px;
+    }
+
+    .admin-confirm-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .admin-confirm-actions .btn {
+      flex: 1 1 0;
+      min-height: 46px;
+    }
+
+    #btnConfirmAccept[data-tone="danger"] {
+      background: #c62828;
+      color: white;
+    }
+
+    #btnConfirmAccept[data-tone="default"] {
+      background: var(--primary-green);
+      color: white;
+    }
+
+    body.admin-confirm-open {
+      overflow: hidden;
+    }
+
+    .panel-card {
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(255, 251, 241, 0.9));
+      padding: 20px;
+      border-radius: 24px;
+      border: 1px solid var(--admin-ink-strong);
+      box-shadow:
+        0 18px 36px rgba(17, 17, 17, 0.06),
+        inset 0 0 0 1px var(--admin-gold-soft);
+    }
+
+    .overview-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    .overview-card {
+      display: grid;
+      gap: 8px;
+      padding: 16px 18px;
+      border-radius: 20px;
+      border: 1px solid var(--admin-ink-strong);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(255, 249, 237, 0.92));
+      box-shadow:
+        0 14px 28px rgba(17, 17, 17, 0.06),
+        inset 0 0 0 1px var(--admin-gold-soft);
+    }
+
+    .overview-card-label {
+      font-size: 12px;
+      color: var(--text-secondary);
+      font-weight: 700;
+    }
+
+    .overview-card-value {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--admin-ink);
+      line-height: 1;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 98px;
+      min-height: 38px;
+      padding: 0 12px;
+      border-radius: 999px;
+      font-weight: 800;
+      font-size: 12px;
+      border: 1px solid transparent;
+    }
+
+    .status-pill-new {
+      background: rgba(255, 193, 7, 0.16);
+      color: #8a5a00;
+      border-color: rgba(255, 193, 7, 0.3);
+    }
+
+    .status-pill-processing {
+      background: rgba(33, 150, 243, 0.12);
+      color: #0d5aa7;
+      border-color: rgba(33, 150, 243, 0.24);
+    }
+
+    .status-pill-completed {
+      background: rgba(46, 125, 50, 0.12);
+      color: #1b5e20;
+      border-color: rgba(46, 125, 50, 0.24);
+    }
+
+    .status-pill-cancelled {
+      background: rgba(198, 40, 40, 0.12);
+      color: #b71c1c;
+      border-color: rgba(198, 40, 40, 0.24);
+    }
+
+    .form-toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 14px 16px;
+      border-radius: 16px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(255, 249, 237, 0.9));
+      border: 1px solid var(--admin-ink-strong);
+    }
+
+    .toggle-switch {
+      width: 22px;
+      height: 22px;
+      accent-color: var(--primary-green);
+      cursor: pointer;
+      flex: 0 0 auto;
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+
+    .form-actions .btn {
+      flex: 1 1 180px;
+    }
+
+    .btn-content {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .table-responsive {
+      overflow-x: auto;
+      width: 100%;
+      max-width: 100%;
+    }
+
+    .table-responsive.panel-card {
+      padding: 14px 16px 18px;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(255, 250, 244, 0.92));
+    }
+
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      margin-top: 0;
+      min-width: 620px;
+      border: 1px solid var(--admin-ink-strong);
+      border-radius: 20px;
+      overflow: hidden;
+      background: rgba(255, 255, 255, 0.96);
+    }
+
+    th,
+    td {
+      padding: 12px;
+      text-align: right;
+      vertical-align: middle;
+      border: none;
+      border-bottom: 1px solid var(--admin-ink-soft);
+    }
+
+    th:not(:first-child),
+    td:not(:first-child) {
+      border-inline-start: 1px solid var(--admin-ink-soft);
+    }
+
+    tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    th {
+      background:
+        linear-gradient(180deg, rgba(17, 17, 17, 0.05), rgba(197, 154, 51, 0.14));
+      font-weight: 700;
+      color: var(--admin-ink);
+    }
+
+    tbody tr:hover td {
+      background: var(--admin-gold-wash);
+    }
+
+    .action-btns {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    @media (min-width: 721px) {
+      #productsTab table {
+        min-width: 1120px;
+      }
+
+      #categoriesTab table {
+        min-width: 860px;
+      }
+
+      #ordersTab table {
+        min-width: 1180px;
+      }
+
+      #productsTab th:last-child,
+      #productsTab td.action-btns {
+        min-width: 372px;
+      }
+
+      #ordersTab th:last-child,
+      #ordersTab td.action-btns {
+        min-width: 296px;
+      }
+
+      td.action-btns {
+        text-align: center;
+        white-space: nowrap;
+      }
+
+      .action-btns {
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: nowrap;
+        width: 100%;
+      }
+
+      .action-btns .btn {
+        width: 112px;
+        min-width: 112px;
+      }
+
+      .action-btns .btn .btn-content {
+        white-space: nowrap;
+      }
+    }
+
+    @media (min-width: 768px) and (max-width: 820px) {
+      .admin-container {
+        width: min(calc(100vw - 18px), 100%);
+        padding: 13px 9px 32px;
+      }
+
+      .admin-header,
+      .auth-section,
+      .panel-card {
+        border-radius: 18px;
+      }
+
+      .admin-header {
+        padding: 15px 16px;
+      }
+
+      .tabs {
+        gap: 5px;
+        padding: 5px;
+        border-radius: 16px;
+      }
+
+      .tab {
+        min-height: 50px;
+        padding: 9px 8px;
+        font-size: 12px;
+      }
+
+      .products-toolbar,
+      .categories-toolbar {
+        padding: 14px;
+        gap: 10px;
+      }
+
+      .products-toolbar .btn,
+      .categories-toolbar .btn {
+        min-width: 148px;
+        min-height: 44px;
+      }
+
+      .table-responsive.panel-card {
+        padding: 11px 12px 15px;
+      }
+
+      #productsTab table {
+        min-width: 960px;
+      }
+
+      #categoriesTab table {
+        min-width: 760px;
+      }
+
+      #ordersTab table {
+        min-width: 980px;
+      }
+
+      #productsTab th:last-child,
+      #productsTab td.action-btns {
+        min-width: 312px;
+      }
+
+      #ordersTab th:last-child,
+      #ordersTab td.action-btns {
+        min-width: 260px;
+      }
+
+      th,
+      td {
+        padding: 10px 8px;
+        font-size: 12.5px;
+      }
+
+      .action-btns {
+        gap: 5px;
+      }
+
+      .action-btns .btn {
+        width: 94px;
+        min-width: 94px;
+        min-height: 42px;
+        padding-inline: 8px;
+        font-size: 12px;
+      }
+    }
+
+    @media (min-width: 821px) and (max-width: 900px) {
+      .admin-container {
+        width: min(calc(100vw - 20px), 100%);
+        padding: 14px 10px 34px;
+      }
+
+      .admin-header,
+      .auth-section,
+      .panel-card {
+        border-radius: 19px;
+      }
+
+      .admin-header {
+        padding: 16px 17px;
+      }
+
+      .tabs {
+        gap: 6px;
+        padding: 6px;
+      }
+
+      .tab {
+        min-height: 52px;
+        padding: 10px 10px;
+        font-size: 12.5px;
+      }
+
+      .products-toolbar,
+      .categories-toolbar {
+        padding: 15px 16px;
+        gap: 11px;
+      }
+
+      .products-toolbar .btn,
+      .categories-toolbar .btn {
+        min-width: 152px;
+        min-height: 45px;
+      }
+
+      .table-responsive.panel-card {
+        padding: 12px 13px 16px;
+      }
+
+      #productsTab table {
+        min-width: 995px;
+      }
+
+      #categoriesTab table {
+        min-width: 785px;
+      }
+
+      #ordersTab table {
+        min-width: 1020px;
+      }
+
+      #productsTab th:last-child,
+      #productsTab td.action-btns {
+        min-width: 324px;
+      }
+
+      #ordersTab th:last-child,
+      #ordersTab td.action-btns {
+        min-width: 272px;
+      }
+
+      th,
+      td {
+        padding: 10px 9px;
+        font-size: 12.8px;
+      }
+
+      .action-btns {
+        gap: 6px;
+      }
+
+      .action-btns .btn {
+        width: 98px;
+        min-width: 98px;
+        min-height: 43px;
+        padding-inline: 9px;
+        font-size: 12.25px;
+      }
+    }
+
+    @media (min-width: 901px) and (max-width: 1024px) {
+      .admin-container {
+        width: min(calc(100vw - 24px), 100%);
+        padding: 16px 12px 36px;
+      }
+
+      .tabs {
+        gap: 7px;
+        padding: 7px;
+      }
+
+      .tab {
+        min-height: 54px;
+        padding: 11px 12px;
+        font-size: 13.5px;
+      }
+
+      .products-toolbar,
+      .categories-toolbar {
+        padding: 17px 18px;
+      }
+
+      .table-responsive.panel-card {
+        padding: 13px 15px 17px;
+      }
+
+      #productsTab table {
+        min-width: 1060px;
+      }
+
+      #categoriesTab table {
+        min-width: 830px;
+      }
+
+      #ordersTab table {
+        min-width: 1100px;
+      }
+
+      #productsTab th:last-child,
+      #productsTab td.action-btns {
+        min-width: 348px;
+      }
+
+      #ordersTab th:last-child,
+      #ordersTab td.action-btns {
+        min-width: 284px;
+      }
+
+      th,
+      td {
+        padding: 11px;
+      }
+
+      .action-btns {
+        gap: 7px;
+      }
+
+      .action-btns .btn {
+        width: 108px;
+        min-width: 108px;
+      }
+    }
+
+    .btn-small {
+      padding: 8px 12px;
+      font-size: 0.85rem;
+    }
+
+    .btn-danger {
+      background-color: #dc3545;
+      color: white;
+    }
+
+    .tabs {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+      margin-bottom: 18px;
+      padding: 8px;
+      border-radius: 22px;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(255, 250, 244, 0.92));
+      border: 1px solid var(--admin-ink-strong);
+      box-shadow:
+        0 14px 28px rgba(17, 17, 17, 0.06),
+        inset 0 0 0 1px var(--admin-gold-soft);
+    }
+
+    .tab {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      min-width: 0;
+      min-height: 56px;
+      padding: 12px 14px;
+      cursor: pointer;
+      font-weight: 700;
+      color: var(--text-secondary);
+      border-radius: 16px;
+      text-align: center;
+      transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+      border: 1px solid rgba(17, 17, 17, 0.08);
+      white-space: normal;
+      line-height: 1.25;
+    }
+
+    .tab span {
+      display: block;
+      overflow-wrap: anywhere;
+    }
+
+    .tab.active {
+      background: linear-gradient(180deg, #1a1a1a, #2a2a2a);
+      color: white;
+      border-color: var(--admin-gold);
+      box-shadow:
+        0 10px 18px rgba(17, 17, 17, 0.18),
+        inset 0 0 0 1px rgba(197, 154, 51, 0.44);
+    }
+
+    .tab:not(.active):hover {
+      transform: translateY(-1px);
+      background: var(--admin-gold-wash);
+    }
+
+    .editor-block {
+      display: grid;
+      gap: 18px;
+    }
+
+    #productsTab,
+    #categoriesTab,
+    #ordersTab,
+    #settingsTab {
+      align-content: start;
+      gap: 20px;
+    }
+
+    .products-toolbar,
+    .categories-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 18px 20px;
+    }
+
+    .products-toolbar-copy,
+    .categories-toolbar-copy {
+      display: grid;
+      gap: 4px;
+    }
+
+    .products-toolbar-copy h4,
+    .categories-toolbar-copy h4 {
+      margin: 0;
+      font-size: 18px;
+    }
+
+    .products-toolbar-copy p,
+    .categories-toolbar-copy p {
+      margin: 0;
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .products-toolbar .btn,
+    .categories-toolbar .btn {
+      width: auto;
+      min-width: 170px;
+      flex: 0 0 auto;
+    }
+
+    .product-editor-shell,
+    .category-editor-shell {
+      position: fixed;
+      inset: 0;
+      z-index: 120;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .product-editor-backdrop,
+    .category-editor-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(15, 23, 15, 0.48);
+      backdrop-filter: blur(8px);
+    }
+
+    .product-editor-surface,
+    .category-editor-surface {
+      position: relative;
+      z-index: 1;
+      width: min(100%, 760px);
+      max-height: calc(100vh - 48px);
+      overflow: auto;
+      padding: 20px;
+      border-radius: 28px;
+      border: 1px solid var(--admin-ink-strong);
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(255, 250, 244, 0.96));
+      box-shadow:
+        0 30px 60px rgba(15, 23, 15, 0.18),
+        inset 0 0 0 1px var(--admin-gold-soft);
+    }
+
+    .product-editor-header,
+    .category-editor-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .product-editor-heading,
+    .category-editor-heading {
+      display: grid;
+      gap: 6px;
+    }
+
+    .product-editor-heading h3,
+    .category-editor-heading h3 {
+      margin: 0;
+      font-size: 24px;
+    }
+
+    .product-editor-heading p,
+    .category-editor-heading p {
+      margin: 0;
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .product-editor-close,
+    .category-editor-close {
+      width: auto;
+      min-width: 0;
+      padding: 0 14px;
+      min-height: 44px;
+      background: rgba(250, 247, 238, 0.96) !important;
+      color: var(--text-secondary);
+      border: 1px solid var(--admin-ink-strong);
+      box-shadow: none;
+    }
+
+    .product-editor-close .btn-content,
+    .category-editor-close .btn-content {
+      width: auto;
+    }
+
+    .product-editor-form,
+    .category-editor-form {
+      margin: 0;
+    }
+
+    body.product-editor-open,
+    body.category-editor-open {
+      overflow: hidden;
+    }
+
+    .settings-grid {
+      display: grid;
+      gap: 14px;
+    }
+
+    .settings-accordion {
+      display: grid;
+      gap: 14px;
+    }
+
+    .settings-accordion-item {
+      border-radius: 22px;
+      border: 1px solid var(--admin-ink-strong);
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(255, 251, 241, 0.94));
+      box-shadow:
+        0 14px 28px rgba(17, 17, 17, 0.06),
+        inset 0 0 0 1px var(--admin-gold-soft);
+      overflow: hidden;
+    }
+
+    .settings-accordion-summary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      width: 100%;
+      padding: 18px 20px;
+      cursor: pointer;
+      list-style: none;
+      user-select: none;
+      transition: background-color 0.2s ease;
+    }
+
+    .settings-accordion-summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .settings-accordion-summary:hover {
+      background: var(--admin-gold-wash);
+    }
+
+    .settings-accordion-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+      font-weight: 800;
+      font-size: 16px;
+      color: var(--text-primary);
+    }
+
+    .settings-accordion-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex: 1;
+      min-width: 0;
+      justify-content: space-between;
+    }
+
+    .settings-accordion-label {
+      color: var(--text-secondary);
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .settings-accordion-caret {
+      width: 12px;
+      height: 12px;
+      flex: 0 0 auto;
+      border-right: 2px solid var(--admin-gold);
+      border-bottom: 2px solid var(--admin-gold);
+      transform: rotate(45deg);
+      transition: transform 0.2s ease;
+    }
+
+    .settings-accordion-item[open] .settings-accordion-caret {
+      transform: rotate(225deg);
+    }
+
+    .settings-accordion-body {
+      padding: 0 20px 20px;
+      border-top: 1px solid var(--admin-ink-soft);
+      background: rgba(255, 255, 255, 0.76);
+    }
+
+    .settings-accordion-body-inner {
+      padding-top: 16px;
+      display: grid;
+      gap: 16px;
+    }
+
+    .settings-section {
+      padding: 0;
+      border: none;
+      background: transparent;
+      box-shadow: none;
+    }
+
+    .section-title .ui-icon,
+    .settings-accordion-title .ui-icon {
+      color: var(--admin-gold);
+    }
+
+    .hero-preview {
+      display: grid;
+      gap: 10px;
+    }
+
+    .hero-preview-image {
+      width: 100%;
+      min-height: 180px;
+      border-radius: 16px;
+      object-fit: cover;
+      background: rgba(197, 154, 51, 0.08);
+      border: 1px solid var(--admin-ink-strong);
+    }
+
+    .link-list {
+      display: grid;
+      gap: 14px;
+    }
+
+    .link-list .form-group {
+      margin: 0;
+    }
+
+    #loginError {
+      margin: 4px 0 0;
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: rgba(198, 40, 40, 0.08);
+      color: var(--text-error);
+      font-size: 13px;
+      border: 1px solid rgba(198, 40, 40, 0.12);
+    }
+
+    #btnLogout {
+      width: auto;
+      min-width: 170px;
+      min-height: 48px;
+      padding: 0 16px;
+      border-radius: 16px;
+      background: #c62828;
+      color: white;
+      box-shadow: 0 12px 24px rgba(198, 40, 40, 0.22);
+    }
+
+    #btnLogout:hover {
+      background: #b71c1c;
+    }
+
+    #btnCancelEdit,
+    #btnCancelCategoryEdit {
+      background: #f1f4f2 !important;
+      color: var(--text-secondary);
+      border: 1px solid var(--admin-ink-strong);
+    }
+
+    .admin-container .btn {
+      border: 1px solid rgba(17, 17, 17, 0.16);
+      box-shadow:
+        0 10px 22px rgba(17, 17, 17, 0.08),
+        inset 0 0 0 1px rgba(197, 154, 51, 0.1);
+    }
+
+    .form-actions .btn,
+    .action-btns .btn {
+      min-height: 46px;
+      border-radius: 14px;
+    }
+
+    .action-btns .btn {
+      width: auto;
+      padding-inline: 12px;
+    }
+
+    .btn-availability-on {
+      background: rgba(46, 125, 50, 0.12);
+      color: var(--secondary-green);
+      border: 1px solid rgba(46, 125, 50, 0.24);
+    }
+
+    .btn-availability-off {
+      background: rgba(255, 193, 7, 0.16);
+      color: #8a6100;
+      border: 1px solid rgba(255, 193, 7, 0.28);
+    }
+
+    @media (max-width: 720px) {
+      .admin-container {
+        padding: 12px 10px 28px;
+      }
+
+      .admin-header {
+        flex-direction: column;
+        align-items: stretch;
+        min-height: 76px;
+        padding: 16px;
+        border-radius: 20px;
+      }
+
+      .admin-title-wrap {
+        padding-inline-end: 156px;
+      }
+
+      #btnLogout {
+        position: static;
+        width: 44px;
+        min-width: 44px;
+        min-height: 44px;
+        height: 44px;
+        padding: 0;
+        border-radius: 14px;
+        box-shadow: 0 10px 20px rgba(198, 40, 40, 0.2);
+      }
+
+      #btnLogout .btn-content {
+        width: auto;
+        gap: 0;
+      }
+
+      #btnLogout .btn-content span:last-child {
+        display: none;
+      }
+
+      #btnLogout .ui-icon {
+        width: 18px;
+        height: 18px;
+      }
+
+      .admin-header-actions {
+        position: absolute;
+        top: 12px;
+        inset-inline-end: 12px;
+        gap: 8px;
+      }
+
+      .header-icon-btn {
+        width: 44px;
+        min-width: 44px;
+        height: 44px;
+        min-height: 44px;
+        padding: 0;
+        border-radius: 14px;
+      }
+
+      .auth-section {
+        padding: 16px;
+        border-radius: 16px;
+      }
+
+      .auth-card {
+        gap: 14px;
+      }
+
+      .auth-note {
+        padding: 13px 14px;
+        border-radius: 16px;
+      }
+
+      .tabs {
+        position: sticky;
+        top: 8px;
+        z-index: 20;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 6px;
+        padding: 6px;
+        border-radius: 18px;
+      }
+
+      .tab {
+        flex-direction: column;
+        gap: 6px;
+        min-height: 72px;
+        padding: 10px 6px;
+        font-size: 11px;
+      }
+
+      .form-grid,
+      .settings-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .panel-card {
+        padding: 15px;
+        border-radius: 20px;
+      }
+
+      .overview-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+
+      .products-toolbar,
+      .categories-toolbar {
+        align-items: stretch;
+        flex-direction: column;
+        padding: 14px;
+      }
+
+      .products-toolbar .btn,
+      .categories-toolbar .btn {
+        width: 100%;
+        min-width: 0;
+      }
+
+      .product-editor-shell,
+      .category-editor-shell {
+        padding: 0;
+        align-items: stretch;
+        justify-content: stretch;
+      }
+
+      .product-editor-backdrop,
+      .category-editor-backdrop {
+        display: none;
+      }
+
+      .product-editor-surface,
+      .category-editor-surface {
+        width: 100%;
+        min-height: 100dvh;
+        max-height: none;
+        padding: 16px 12px 28px;
+        border: none;
+        border-radius: 0;
+        background: var(--bg-color);
+        box-shadow: none;
+      }
+
+      .product-editor-header,
+      .category-editor-header {
+        position: sticky;
+        top: 0;
+        z-index: 2;
+        margin: 0 -12px 16px;
+        padding: 12px;
+        background: rgba(255, 251, 241, 0.96);
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid var(--admin-ink-soft);
+      }
+
+      .product-editor-heading h3,
+      .category-editor-heading h3 {
+        font-size: 21px;
+      }
+
+      .product-editor-close,
+      .category-editor-close {
+        min-height: 40px;
+        padding: 0 12px;
+        border-radius: 12px;
+      }
+
+      .settings-accordion-summary {
+        padding: 16px;
+      }
+
+      .settings-accordion-meta {
+        gap: 10px;
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .settings-accordion-label {
+        white-space: normal;
+      }
+
+      .settings-accordion-body {
+        padding: 0 16px 16px;
+      }
+
+      .file-picker-row {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .file-picker-trigger {
+        width: 100%;
+        min-width: 0;
+      }
+
+      .admin-confirm {
+        align-items: end;
+        padding: 12px;
+      }
+
+      .admin-confirm-dialog {
+        width: 100%;
+        padding: 18px;
+        border-radius: 22px;
+      }
+
+      .admin-confirm-actions {
+        flex-direction: column-reverse;
+      }
+
+      .form-actions {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+      }
+
+      .form-actions .btn {
+        width: 100%;
+        min-height: 40px;
+        padding: 10px 12px;
+        border-radius: 12px;
+        font-size: 12px;
+      }
+
+      .form-actions .btn:only-child {
+        grid-column: 1 / -1;
+        width: min(100%, 220px);
+        justify-self: start;
+      }
+
+      .form-actions .btn .btn-content {
+        gap: 6px;
+      }
+
+      .action-btns .btn {
+        flex: 1 1 calc(50% - 4px);
+      }
+
+      .table-responsive.panel-card {
+        padding: 12px;
+      }
+
+      table {
+        min-width: 0;
+      }
+
+      .table-responsive tbody {
+        gap: 10px;
+      }
+
+      .table-responsive tr {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px 14px;
+        padding: 14px;
+        border-radius: 20px;
+        border: 1px solid var(--admin-ink-strong);
+        background:
+          linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(255, 250, 244, 0.94));
+        box-shadow:
+          0 12px 24px rgba(17, 17, 17, 0.05),
+          inset 0 0 0 1px var(--admin-gold-soft);
+      }
+
+      #productsTableBody tr {
+        grid-template-columns: 84px minmax(0, 1fr);
+        align-items: start;
+      }
+
+      .table-responsive td {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        width: auto;
+        min-width: 0;
+        padding: 0;
+        border: none;
+      }
+
+      .table-responsive td::before {
+        margin-bottom: 0;
+        font-size: 11px;
+        font-weight: 800;
+        color: rgba(17, 17, 17, 0.7);
+      }
+
+      #productsTableBody td:last-child,
+      #categoriesTableBody td:last-child,
+      #ordersTableBody td:last-child {
+        grid-column: 1 / -1;
+      }
+
+      #productsTableBody td:first-child {
+        grid-column: 1;
+        grid-row: 1 / span 4;
+        align-self: stretch;
+        justify-content: flex-start;
+      }
+
+      #productsTableBody td:nth-child(2) {
+        grid-column: 2;
+        grid-row: 1;
+      }
+
+      #productsTableBody td:nth-child(3) {
+        grid-column: 2;
+        grid-row: 2;
+      }
+
+      #productsTableBody td:nth-child(4) {
+        grid-column: 2;
+        grid-row: 3;
+      }
+
+      #productsTableBody td:nth-child(5) {
+        grid-column: 2;
+        grid-row: 4;
+      }
+
+      #productsTableBody td:nth-child(6) {
+        grid-column: 1 / -1;
+      }
+
+      #productsTableBody td:first-child img {
+        width: 100% !important;
+        max-width: 92px;
+        height: 92px !important;
+        border-radius: 18px !important;
+        border: 1px solid var(--admin-ink-strong);
+        box-shadow:
+          0 10px 24px rgba(17, 17, 17, 0.12),
+          inset 0 0 0 1px var(--admin-gold-soft);
+      }
+
+      #categoriesTableBody td:first-child {
+        font-size: 1.9rem !important;
+        line-height: 1;
+      }
+
+      #productsTableBody td:last-child,
+      #categoriesTableBody td:last-child,
+      #ordersTableBody td:last-child {
+        margin-top: 2px;
+        padding-top: 10px;
+        border-top: 1px solid var(--admin-ink-soft);
+      }
+
+      #productsTableBody td:last-child::before,
+      #categoriesTableBody td:last-child::before,
+      #ordersTableBody td:last-child::before {
+        display: none;
+      }
+
+      .table-responsive .action-btns {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+        width: 100%;
+      }
+
+      .table-responsive .product-action-btns {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .table-responsive .action-btns .btn {
+        width: 100%;
+        min-width: 0;
+        flex: none;
+        min-height: 38px;
+        padding-inline: 10px;
+      }
+    }
+
+    @media (max-width: 420px) {
+      .admin-title-wrap h2 {
+        font-size: 20px;
+      }
+
+      .tab {
+        font-size: 10.5px;
+      }
+
+      .product-editor-header,
+      .category-editor-header {
+        gap: 12px;
+      }
+
+      .product-editor-close,
+      .category-editor-close {
+        width: 40px;
+        min-width: 40px;
+        padding: 0;
+      }
+
+      .product-editor-close .btn-content,
+      .category-editor-close .btn-content {
+        gap: 0;
+      }
+
+      .product-editor-close .btn-content span:last-child,
+      .category-editor-close .btn-content span:last-child {
+        display: none;
+      }
+
+      .field-label,
+      .toggle-label {
+        gap: 7px;
+      }
+
+      .ui-icon {
+        width: 16px;
+        height: 16px;
+      }
+
+      .form-actions {
+        grid-template-columns: 1fr;
+      }
+
+      .form-actions .btn:only-child {
+        width: 100%;
+      }
+
+      #productsTableBody tr {
+        grid-template-columns: 84px minmax(0, 1fr);
+        gap: 10px 12px;
+      }
+
+      #productsTableBody td:first-child {
+        grid-column: 1;
+        grid-row: 1 / span 4;
+      }
+
+      #productsTableBody td:nth-child(2),
+      #productsTableBody td:nth-child(3),
+      #productsTableBody td:nth-child(4) {
+        grid-column: 2;
+      }
+
+      #productsTableBody td:nth-child(6),
+      #categoriesTableBody td:last-child {
+        grid-column: 1 / -1;
+      }
+
+      #productsTableBody td:last-child {
+        grid-column: 1 / -1;
+      }
+
+      #productsTableBody td:first-child img {
+        max-width: 84px;
+        height: 84px !important;
+      }
+
+      #categoriesTableBody td:first-child {
+        grid-column: 1 / -1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <svg class="icon-sprite" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <symbol id="icon-products" viewBox="0 0 24 24">
+      <path d="M4 7.5 12 4l8 3.5-8 3.5L4 7.5Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+      <path d="M4 7.5V16.5L12 20V11" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+      <path d="M20 7.5V16.5L12 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="icon-categories" viewBox="0 0 24 24">
+      <path d="M4 4H10V10H4zM14 4H20V10H14zM4 14H10V20H4zM14 14H20V20H14z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="icon-settings" viewBox="0 0 24 24">
+      <path d="M4 7h16M7 12h10M10 17h4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+      <circle cx="9" cy="7" r="2" fill="currentColor"/>
+      <circle cx="15" cy="12" r="2" fill="currentColor"/>
+      <circle cx="12" cy="17" r="2" fill="currentColor"/>
+    </symbol>
+    <symbol id="icon-logout" viewBox="0 0 24 24">
+      <path d="M14 4h3a3 3 0 0 1 3 3v10a3 3 0 0 1-3 3h-3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+      <path d="M10 16 14 12 10 8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M14 12H4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="icon-login" viewBox="0 0 24 24">
+      <path d="M10 4H7a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+      <path d="M14 8 18 12 14 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M18 12H8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="icon-mail" viewBox="0 0 24 24">
+      <path d="M4 6h16v12H4z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+      <path d="m5 7 7 6 7-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="icon-lock" viewBox="0 0 24 24">
+      <rect x="5" y="10" width="14" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/>
+      <path d="M8 10V8a4 4 0 0 1 8 0v2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="icon-tag" viewBox="0 0 24 24">
+      <path d="M4 12 12 4h7v7l-8 8-7-7Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+      <circle cx="16" cy="8" r="1.3" fill="currentColor"/>
+    </symbol>
+    <symbol id="icon-price" viewBox="0 0 24 24">
+      <path d="M12 4v16M16 7.5c0-1.4-1.8-2.5-4-2.5s-4 1.1-4 2.5 1.8 2.5 4 2.5 4 1.1 4 2.5-1.8 2.5-4 2.5-4-1.1-4-2.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="icon-folder" viewBox="0 0 24 24">
+      <path d="M3.5 7.5h6l2 2h9v7.5a3 3 0 0 1-3 3h-11a3 3 0 0 1-3-3V7.5Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="icon-image" viewBox="0 0 24 24">
+      <rect x="4" y="5" width="16" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/>
+      <circle cx="9" cy="10" r="1.5" fill="currentColor"/>
+      <path d="m7 17 3.5-3.5L13 16l2.5-2.5L17 15l3 2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="icon-check" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.8"/>
+      <path d="m8.5 12.2 2.2 2.2 4.8-4.8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="icon-order" viewBox="0 0 24 24">
+      <path d="M8 6h10M8 12h7M8 18h4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+      <path d="m5 8 2-2 2 2M7 6v12M5 16l2 2 2-2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="icon-spark" viewBox="0 0 24 24">
+      <path d="m12 4 1.6 4.4L18 10l-4.4 1.6L12 16l-1.6-4.4L6 10l4.4-1.6L12 4Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="icon-link" viewBox="0 0 24 24">
+      <path d="M10 14 8.5 15.5a3.5 3.5 0 1 1-5-5L7 7a3.5 3.5 0 0 1 5 0" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+      <path d="M14 10 15.5 8.5a3.5 3.5 0 1 1 5 5L17 17a3.5 3.5 0 0 1-5 0" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+      <path d="M9 15 15 9" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="icon-upload" viewBox="0 0 24 24">
+      <path d="M12 16V5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+      <path d="m8.5 8.5 3.5-3.5 3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M5 19h14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="icon-phone" viewBox="0 0 24 24">
+      <path d="M6.7 4.8c.4-.4 1-.6 1.6-.4l2.2.7c.7.2 1.1.9 1 1.6l-.2 2.1c0 .4.1.8.4 1.1l2.3 2.3c.3.3.7.5 1.1.4l2.1-.2c.7-.1 1.4.3 1.6 1l.7 2.2c.2.6 0 1.2-.4 1.6l-1 1c-.7.7-1.8 1-2.8.8-2.2-.5-4.4-1.7-6.3-3.7-1.9-1.9-3.2-4.1-3.7-6.3-.2-1 .1-2.1.8-2.8l1-1Z" fill="currentColor"/>
+    </symbol>
+    <symbol id="icon-message" viewBox="0 0 24 24">
+      <path d="M5 18.5V7a3 3 0 0 1 3-3h8a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3H9l-4 2.5Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="icon-send" viewBox="0 0 24 24">
+      <path d="M20 4 4.5 10.2c-.9.4-.8 1.7.2 1.9l5.2 1.5 1.5 5.2c.3 1 1.5 1.1 1.9.2L20 4Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+      <path d="M9.8 13.6 20 4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="icon-map" viewBox="0 0 24 24">
+      <path d="M12 21s6-5.7 6-11a6 6 0 1 0-12 0c0 5.3 6 11 6 11Z" fill="none" stroke="currentColor" stroke-width="1.8"/>
+      <circle cx="12" cy="10" r="2.3" fill="none" stroke="currentColor" stroke-width="1.8"/>
+    </symbol>
+    <symbol id="icon-facebook" viewBox="0 0 24 24">
+      <path d="M13.5 21v-7h2.6l.4-3h-3V9.1c0-.9.3-1.6 1.7-1.6H16.7V4.8c-.3 0-1.2-.1-2.3-.1-2.3 0-3.9 1.4-3.9 4V11H8v3h2.5v7h3z" fill="currentColor"/>
+    </symbol>
+    <symbol id="icon-instagram" viewBox="0 0 24 24">
+      <rect x="4" y="4" width="16" height="16" rx="5" ry="5" fill="none" stroke="currentColor" stroke-width="1.8"/>
+      <circle cx="12" cy="12" r="3.5" fill="none" stroke="currentColor" stroke-width="1.8"/>
+      <circle cx="17.2" cy="6.8" r="1.1" fill="currentColor"/>
+    </symbol>
+    <symbol id="icon-tiktok" viewBox="0 0 24 24">
+      <path d="M14.2 4c.5 1.7 1.8 3 3.5 3.5v2.8c-1.3 0-2.5-.4-3.5-1v5.2a4.5 4.5 0 1 1-4.5-4.5c.3 0 .7 0 1 .1v2.9a2 2 0 1 0 1 1.7V4h2.5z" fill="currentColor"/>
+    </symbol>
+    <symbol id="icon-plus" viewBox="0 0 24 24">
+      <path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="icon-save" viewBox="0 0 24 24">
+      <path d="M5 4h11l3 3v13H5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+      <path d="M8 4v5h8V4M9 20v-6h6v6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="icon-edit" viewBox="0 0 24 24">
+      <path d="m4 20 4.5-1 9-9a2.1 2.1 0 0 0-3-3l-9 9L4 20Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+      <path d="m13.5 7.5 3 3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="icon-trash" viewBox="0 0 24 24">
+      <path d="M5 7h14M9 7V5h6v2M8 7l1 12h6l1-12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="icon-close" viewBox="0 0 24 24">
+      <path d="m7 7 10 10M17 7 7 17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="icon-bell" viewBox="0 0 24 24">
+      <path d="M12 4a4 4 0 0 0-4 4v2.4c0 .8-.3 1.6-.8 2.2L6 14h12l-1.2-1.4c-.5-.6-.8-1.4-.8-2.2V8a4 4 0 0 0-4-4Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+      <path d="M10 18a2 2 0 0 0 4 0" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="icon-globe" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8"/>
+      <path d="M3 12h18M12 3c2.4 2.5 3.7 5.8 3.7 9S14.4 18.5 12 21M12 3c-2.4 2.5-3.7 5.8-3.7 9S9.6 18.5 12 21" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="icon-chart" viewBox="0 0 24 24">
+      <path d="M5 19V9M12 19V5M19 19v-7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+      <path d="M4 19h16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </symbol>
+  </svg>
+  <div class="admin-container">
+      <div class="admin-header">
+        <div class="admin-title-wrap">
+          <h2>لوحة التحكم</h2>
+        </div>
+        <div class="admin-header-actions">
+          <a href="/" target="_blank" rel="noopener" class="header-icon-btn" id="btnOpenSite" aria-label="فتح الواجهة العامة" title="فتح الواجهة العامة">
+            <svg class="ui-icon" aria-hidden="true"><use href="#icon-globe"></use></svg>
+          </a>
+          <button type="button" class="header-icon-btn hidden" id="btnOrdersInbox" aria-label="الطلبات الجديدة" title="الطلبات الجديدة">
+            <svg class="ui-icon" aria-hidden="true"><use href="#icon-bell"></use></svg>
+            <span class="header-badge hidden" id="newOrdersBadge">0</span>
+          </button>
+          <button id="btnLogout" class="btn btn-small hidden" aria-label="تسجيل الخروج" title="تسجيل الخروج">
+            <span class="btn-content">
+              <svg class="ui-icon" aria-hidden="true"><use href="#icon-logout"></use></svg>
+              <span>تسجيل الخروج</span>
+            </span>
+          </button>
+        </div>
+      </div>
+
+      <div id="authSection" class="auth-section">
+        <div class="auth-card">
+          <div class="section-title">
+          <h3>تسجيل الدخول</h3>
+          </div>
+
+          <div class="auth-note" id="loginProtectionHint">
+            <svg class="ui-icon" aria-hidden="true"><use href="#icon-lock"></use></svg>
+            <span class="auth-note-text">&#1575;&#1604;&#1583;&#1582;&#1608;&#1604;&#32;&#1604;&#1604;&#1573;&#1583;&#1575;&#1585;&#1577;&#32;&#1601;&#1602;&#1591;&#46;&#32;&#1610;&#1578;&#1605;&#32;&#1573;&#1610;&#1602;&#1575;&#1601;&#32;&#1575;&#1604;&#1605;&#1581;&#1575;&#1608;&#1604;&#1575;&#1578;&#32;&#1575;&#1604;&#1605;&#1578;&#1603;&#1585;&#1585;&#1577;&#32;&#1605;&#1572;&#1602;&#1578;&#1611;&#1575;&#32;&#1604;&#1581;&#1605;&#1575;&#1610;&#1577;&#32;&#1575;&#1604;&#1604;&#1608;&#1581;&#1577;&#46;</span>
+          </div>
+
+          <form id="loginForm" class="editor-block">
+            <div class="form-grid">
+            <div class="form-group">
+              <label for="email" class="field-label">
+                <svg class="ui-icon" aria-hidden="true"><use href="#icon-mail"></use></svg>
+                <span>البريد الإلكتروني</span>
+              </label>
+              <input type="email" id="email" class="form-control" required dir="ltr" placeholder="name@example.com" autocomplete="username" inputmode="email" autocapitalize="off" spellcheck="false" aria-describedby="loginProtectionHint loginError">
+            </div>
+            <div class="form-group">
+              <label for="password" class="field-label">
+                <svg class="ui-icon" aria-hidden="true"><use href="#icon-lock"></use></svg>
+                <span>كلمة المرور</span>
+              </label>
+              <input type="password" id="password" class="form-control" required dir="ltr" placeholder="********" autocomplete="current-password" spellcheck="false" aria-describedby="loginProtectionHint loginError">
+            </div>
+          </div>
+
+            <p id="loginError" role="alert" aria-live="assertive" style="display: none;"></p>
+            <button type="submit" class="btn btn-primary" id="btnLogin">
+          <span class="btn-content">
+            <svg class="ui-icon" aria-hidden="true"><use href="#icon-login"></use></svg>
+            <span>دخول</span>
+          </span>
+            </button>
+          </form>
+        </div>
+      </div>
+
+    <div id="dashboardSection" class="dashboard-section hidden">
+      <div class="tabs">
+        <div class="tab active" data-target="productsTab">
+          <svg class="ui-icon" aria-hidden="true"><use href="#icon-products"></use></svg>
+          <span>المنتجات</span>
+        </div>
+        <div class="tab" data-target="categoriesTab">
+          <svg class="ui-icon" aria-hidden="true"><use href="#icon-categories"></use></svg>
+          <span>التصنيفات</span>
+        </div>
+        <div class="tab" data-target="ordersTab">
+          <svg class="ui-icon" aria-hidden="true"><use href="#icon-bell"></use></svg>
+          <span>الطلبات</span>
+        </div>
+        <div class="tab" data-target="settingsTab">
+          <svg class="ui-icon" aria-hidden="true"><use href="#icon-settings"></use></svg>
+          <span>إعدادات الموقع</span>
+        </div>
+      </div>
+
+      <div id="productsTab" class="editor-block">
+        <div class="products-toolbar panel-card">
+          <div class="products-toolbar-copy">
+            <h4>قائمة المنتجات</h4>
+            <p>أضف منتجًا جديدًا أو افتح منتجًا للتعديل من القائمة.</p>
+          </div>
+          <button type="button" class="btn btn-accent" id="btnOpenProductEditor">
+            <span class="btn-content">
+              <svg class="ui-icon" aria-hidden="true"><use href="#icon-plus"></use></svg>
+              <span>إضافة منتج</span>
+            </span>
+          </button>
+        </div>
+
+        <div class="table-responsive panel-card">
+          <table>
+            <thead>
+              <tr>
+                <th>صورة</th>
+                <th>الاسم</th>
+                <th>السعر</th>
+                <th>التصنيف</th>
+                <th>النقرات</th>
+                <th>الحالة</th>
+                <th>إجراءات</th>
+              </tr>
+            </thead>
+            <tbody id="productsTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div id="productEditorShell" class="product-editor-shell hidden" aria-hidden="true">
+        <div class="product-editor-backdrop" data-close-product-editor="true"></div>
+        <div class="product-editor-surface" role="dialog" aria-modal="true" aria-labelledby="productEditorTitle">
+          <div class="product-editor-header">
+            <div class="product-editor-heading">
+              <h3 id="productEditorTitle">إضافة منتج</h3>
+              <p id="productEditorSubtitle">أدخل بيانات المنتج ثم احفظه لظهوره في القائمة.</p>
+            </div>
+            <button type="button" class="btn product-editor-close" id="btnCloseProductEditor">
+              <span class="btn-content">
+                <svg class="ui-icon" aria-hidden="true"><use href="#icon-close"></use></svg>
+                <span>إغلاق</span>
+              </span>
+            </button>
+          </div>
+
+          <form id="productForm" class="editor-block panel-card product-editor-form">
+            <input type="hidden" id="prodId">
+
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="prodName" class="field-label">
+                  <svg class="ui-icon" aria-hidden="true"><use href="#icon-tag"></use></svg>
+                  <span>اسم المنتج</span>
+                </label>
+                <input type="text" id="prodName" class="form-control" required placeholder="برغر دجاج">
+              </div>
+
+              <div class="form-group">
+                <label for="prodPrice" class="field-label">
+                  <svg class="ui-icon" aria-hidden="true"><use href="#icon-price"></use></svg>
+                  <span>السعر</span>
+                </label>
+                <input type="number" id="prodPrice" class="form-control" required placeholder="1200">
+              </div>
+
+              <div class="form-group full-width">
+                <label for="prodCategory" class="field-label">
+                  <svg class="ui-icon" aria-hidden="true"><use href="#icon-folder"></use></svg>
+                  <span>التصنيف</span>
+                </label>
+                <select id="prodCategory" class="form-control" required></select>
+                <small id="productCategoryHint" class="form-help">
+                  أضف تصنيفًا أولًا
+                </small>
+              </div>
+
+              <div class="form-group full-width">
+                <label for="prodImage" class="field-label">
+                  <svg class="ui-icon" aria-hidden="true"><use href="#icon-image"></use></svg>
+                  <span>صورة المنتج</span>
+                </label>
+                <div class="file-picker">
+                  <input type="file" id="prodImage" class="file-input" accept="image/*">
+                  <div class="file-picker-row">
+                    <label for="prodImage" class="file-picker-trigger">
+                      <svg class="ui-icon" aria-hidden="true"><use href="#icon-upload"></use></svg>
+                      <span>اختيار صورة</span>
+                    </label>
+                    <span class="file-picker-name" id="prodImageName">لم يتم اختيار ملف</span>
+                  </div>
+                </div>
+                <small class="form-help">الحالية: <span id="currentImgUrl">لا يوجد</span></small>
+              </div>
+
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn btn-accent" id="btnSaveProduct">إضافة منتج</button>
+              <button type="button" class="btn" id="btnCancelEdit" style="display:none; background:#eee;">إلغاء</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div id="categoriesTab" class="editor-block hidden">
+        <div class="categories-toolbar panel-card">
+          <div class="categories-toolbar-copy">
+            <h4>قائمة التصنيفات</h4>
+            <p>أضف تصنيفًا جديدًا أو افتح تصنيفًا للتعديل من القائمة.</p>
+          </div>
+          <button type="button" class="btn btn-accent" id="btnOpenCategoryEditor">
+            <span class="btn-content">
+              <svg class="ui-icon" aria-hidden="true"><use href="#icon-plus"></use></svg>
+              <span>إضافة تصنيف</span>
+            </span>
+          </button>
+        </div>
+
+        <div class="table-responsive panel-card">
+          <table>
+            <thead>
+              <tr>
+                <th>الأيقونة</th>
+                <th>التصنيف</th>
+                <th>الترتيب</th>
+                <th>عدد المنتجات</th>
+                <th>إجراءات</th>
+              </tr>
+            </thead>
+            <tbody id="categoriesTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div id="categoryEditorShell" class="category-editor-shell hidden" aria-hidden="true">
+        <div class="category-editor-backdrop" data-close-category-editor="true"></div>
+        <div class="category-editor-surface" role="dialog" aria-modal="true" aria-labelledby="categoryEditorTitle">
+          <div class="category-editor-header">
+            <div class="category-editor-heading">
+              <h3 id="categoryEditorTitle">إضافة تصنيف</h3>
+              <p id="categoryEditorSubtitle">أدخل بيانات التصنيف ثم احفظه ليظهر في القائمة.</p>
+            </div>
+            <button type="button" class="btn category-editor-close" id="btnCloseCategoryEditor">
+              <span class="btn-content">
+                <svg class="ui-icon" aria-hidden="true"><use href="#icon-close"></use></svg>
+                <span>إغلاق</span>
+              </span>
+            </button>
+          </div>
+
+          <form id="categoryForm" class="editor-block panel-card category-editor-form">
+            <input type="hidden" id="catId">
+
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="catName" class="field-label">
+                  <svg class="ui-icon" aria-hidden="true"><use href="#icon-folder"></use></svg>
+                  <span>اسم التصنيف</span>
+                </label>
+                <input type="text" id="catName" class="form-control" required placeholder="برغر">
+              </div>
+
+              <div class="form-group">
+                <label for="catOrder" class="field-label">
+                  <svg class="ui-icon" aria-hidden="true"><use href="#icon-order"></use></svg>
+                  <span>ترتيب الظهور</span>
+                </label>
+                <input type="number" id="catOrder" class="form-control" min="0" step="1" value="0" required placeholder="1">
+              </div>
+
+              <div class="form-group full-width">
+                <label for="catIcon" class="field-label">
+                  <svg class="ui-icon" aria-hidden="true"><use href="#icon-spark"></use></svg>
+                  <span>رمز التصنيف</span>
+                </label>
+                <input type="text" id="catIcon" class="form-control" maxlength="8" placeholder="🍔">
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn btn-accent" id="btnSaveCategory">إضافة تصنيف</button>
+              <button type="button" class="btn" id="btnCancelCategoryEdit" style="display:none; background:#eee;">إلغاء</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div id="ordersTab" class="editor-block hidden">
+        <div class="orders-toolbar products-toolbar panel-card">
+          <div class="products-toolbar-copy">
+            <h4>قائمة الطلبات</h4>
+            <p>تظهر هنا الطلبات المباشرة القادمة من الواجهة مع حالة كل طلب.</p>
+          </div>
+        </div>
+
+        <div class="overview-grid">
+          <div class="overview-card">
+            <span class="overview-card-label">طلبات جديدة</span>
+            <strong class="overview-card-value" id="summaryNewOrders">0</strong>
+          </div>
+          <div class="overview-card">
+            <span class="overview-card-label">إجمالي الطلبات</span>
+            <strong class="overview-card-value" id="summaryTotalOrders">0</strong>
+          </div>
+          <div class="overview-card">
+            <span class="overview-card-label">زيارات الموقع</span>
+            <strong class="overview-card-value" id="summarySiteVisits">0</strong>
+          </div>
+        </div>
+
+        <div class="table-responsive panel-card">
+          <table>
+            <thead>
+              <tr>
+                <th>المنتج</th>
+                <th>العميل</th>
+                <th>الهاتف</th>
+                <th>الكمية</th>
+                <th>الحالة</th>
+                <th>التاريخ</th>
+                <th>إجراءات</th>
+              </tr>
+            </thead>
+            <tbody id="ordersTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div id="settingsTab" class="editor-block hidden">
+        <form id="settingsForm" class="editor-block panel-card">
+          <div class="settings-grid settings-accordion">
+            <details class="settings-accordion-item" open>
+              <summary class="settings-accordion-summary">
+                <span class="settings-accordion-meta">
+                  <span class="settings-accordion-title">
+                    <svg class="ui-icon" aria-hidden="true"><use href="#icon-image"></use></svg>
+                    <span>الصورة الرئيسية</span>
+                  </span>
+                  <span class="settings-accordion-label">صورة الهيرو ومعاينتها</span>
+                </span>
+                <span class="settings-accordion-caret" aria-hidden="true"></span>
+              </summary>
+              <div class="settings-accordion-body">
+                <div class="settings-accordion-body-inner settings-section">
+                  <div class="hero-preview">
+                    <img id="heroPreviewImage" class="hero-preview-image" alt="معاينة الصورة الرئيسية" hidden>
+                  </div>
+
+                  <div class="link-list" style="margin-top:14px;">
+                    <div class="form-group">
+                      <label for="heroImageUrl" class="field-label">
+                        <svg class="ui-icon" aria-hidden="true"><use href="#icon-link"></use></svg>
+                        <span>رابط الصورة</span>
+                      </label>
+                      <input type="url" id="heroImageUrl" class="form-control" dir="ltr" placeholder="https://ordely.app/hero.jpg">
+                      <small class="form-help">المقاس المستحسن: 1900px × 300px</small>
+                    </div>
+
+                    <div class="form-group">
+                      <label for="heroImageFile" class="field-label">
+                        <svg class="ui-icon" aria-hidden="true"><use href="#icon-upload"></use></svg>
+                        <span>أو اختر صورة من جهازك</span>
+                      </label>
+                      <div class="file-picker">
+                        <input type="file" id="heroImageFile" class="file-input" accept="image/*">
+                        <div class="file-picker-row">
+                          <label for="heroImageFile" class="file-picker-trigger">
+                            <svg class="ui-icon" aria-hidden="true"><use href="#icon-upload"></use></svg>
+                            <span>اختيار صورة</span>
+                          </label>
+                          <span class="file-picker-name" id="heroImageFileName">لم يتم اختيار ملف</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </details>
+
+            <details class="settings-accordion-item">
+              <summary class="settings-accordion-summary">
+                <span class="settings-accordion-meta">
+                  <span class="settings-accordion-title">
+                    <svg class="ui-icon" aria-hidden="true"><use href="#icon-bell"></use></svg>
+                    <span>إعدادات الطلب</span>
+                  </span>
+                  <span class="settings-accordion-label">تفعيل الطلب المباشر ونطاق الخدمة</span>
+                </span>
+                <span class="settings-accordion-caret" aria-hidden="true"></span>
+              </summary>
+              <div class="settings-accordion-body">
+                <div class="settings-accordion-body-inner settings-section">
+                  <div class="link-list">
+                    <div class="form-toggle-row">
+                      <label for="ordersEnabled" class="toggle-label">
+                        <svg class="ui-icon" aria-hidden="true"><use href="#icon-bell"></use></svg>
+                        <span>تفعيل الطلبات المباشرة من الواجهة</span>
+                      </label>
+                      <input type="checkbox" id="ordersEnabled" class="toggle-switch">
+                    </div>
+
+                    <div class="form-group">
+                      <label for="serviceCountry" class="field-label">
+                        <svg class="ui-icon" aria-hidden="true"><use href="#icon-globe"></use></svg>
+                        <span>الدولة</span>
+                      </label>
+                      <input type="text" id="serviceCountry" class="form-control" placeholder="الجزائر">
+                    </div>
+
+                    <div class="form-group">
+                      <label for="serviceRegion" class="field-label">
+                        <svg class="ui-icon" aria-hidden="true"><use href="#icon-map"></use></svg>
+                        <span>الولاية</span>
+                      </label>
+                      <input type="text" id="serviceRegion" class="form-control" placeholder="سوق أهراس">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </details>
+
+            <details class="settings-accordion-item">
+              <summary class="settings-accordion-summary">
+                <span class="settings-accordion-meta">
+                  <span class="settings-accordion-title">
+                    <svg class="ui-icon" aria-hidden="true"><use href="#icon-phone"></use></svg>
+                    <span>أزرار التواصل</span>
+                  </span>
+                  <span class="settings-accordion-label">الهاتف وواتساب ومسنجر وتلجرام والموقع</span>
+                </span>
+                <span class="settings-accordion-caret" aria-hidden="true"></span>
+              </summary>
+              <div class="settings-accordion-body">
+                <div class="settings-accordion-body-inner settings-section">
+                  <div class="link-list">
+                    <div class="form-group">
+                      <label for="sitePhoneNumber" class="field-label">
+                        <svg class="ui-icon" aria-hidden="true"><use href="#icon-phone"></use></svg>
+                        <span>رقم الهاتف</span>
+                      </label>
+                      <input type="text" id="sitePhoneNumber" class="form-control" dir="ltr" placeholder="+213550000000">
+                    </div>
+
+                    <div class="form-group">
+                      <label for="whatsappUrl" class="field-label">
+                        <svg class="ui-icon" aria-hidden="true"><use href="#icon-message"></use></svg>
+                        <span>رقم واتساب</span>
+                      </label>
+                      <input type="text" id="whatsappUrl" class="form-control" dir="ltr" placeholder="+213660000000">
+                    </div>
+
+                    <div class="form-group">
+                      <label for="messengerUrl" class="field-label">
+                        <svg class="ui-icon" aria-hidden="true"><use href="#icon-facebook"></use></svg>
+                        <span>معرف مسنجر</span>
+                      </label>
+                      <input type="text" id="messengerUrl" class="form-control" dir="ltr" placeholder="ordelyapp">
+                    </div>
+
+                    <div class="form-group">
+                      <label for="telegramUrl" class="field-label">
+                        <svg class="ui-icon" aria-hidden="true"><use href="#icon-send"></use></svg>
+                        <span>يوزر تلجرام</span>
+                      </label>
+                      <input type="text" id="telegramUrl" class="form-control" dir="ltr" placeholder="@ordely_app">
+                    </div>
+
+                    <div class="form-group">
+                      <label for="googleMapsUrl" class="field-label">
+                        <svg class="ui-icon" aria-hidden="true"><use href="#icon-map"></use></svg>
+                        <span>رابط جوجل ماب</span>
+                      </label>
+                      <input type="url" id="googleMapsUrl" class="form-control" dir="ltr" placeholder="https://maps.app.goo.gl/ordely123">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </details>
+
+            <details class="settings-accordion-item">
+              <summary class="settings-accordion-summary">
+                <span class="settings-accordion-meta">
+                  <span class="settings-accordion-title">
+                    <svg class="ui-icon" aria-hidden="true"><use href="#icon-link"></use></svg>
+                    <span>روابط المنصات</span>
+                  </span>
+                  <span class="settings-accordion-label">فيسبوك وإنستغرام وتيك توك</span>
+                </span>
+                <span class="settings-accordion-caret" aria-hidden="true"></span>
+              </summary>
+              <div class="settings-accordion-body">
+                <div class="settings-accordion-body-inner settings-section">
+                  <div class="link-list">
+                    <div class="form-group">
+                      <label for="facebookUrl" class="field-label">
+                        <svg class="ui-icon" aria-hidden="true"><use href="#icon-facebook"></use></svg>
+                        <span>فيسبوك</span>
+                      </label>
+                      <input type="url" id="facebookUrl" class="form-control" dir="ltr" placeholder="https://facebook.com/ordely.app">
+                    </div>
+
+                    <div class="form-group">
+                      <label for="instagramUrl" class="field-label">
+                        <svg class="ui-icon" aria-hidden="true"><use href="#icon-instagram"></use></svg>
+                        <span>إنستغرام</span>
+                      </label>
+                      <input type="url" id="instagramUrl" class="form-control" dir="ltr" placeholder="https://instagram.com/ordely.app">
+                    </div>
+
+                    <div class="form-group">
+                      <label for="tiktokUrl" class="field-label">
+                        <svg class="ui-icon" aria-hidden="true"><use href="#icon-tiktok"></use></svg>
+                        <span>تيك توك</span>
+                      </label>
+                      <input type="url" id="tiktokUrl" class="form-control" dir="ltr" placeholder="https://tiktok.com/@ordely.app">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </details>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-accent" id="btnSaveSettings">حفظ التغييرات</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div id="adminToastStack" class="admin-toast-stack" aria-live="polite" aria-atomic="true"></div>
+
+  <div id="adminConfirmModal" class="admin-confirm hidden" aria-hidden="true">
+    <div class="admin-confirm-backdrop" data-confirm-close="true"></div>
+    <div class="admin-confirm-dialog" role="dialog" aria-modal="true" aria-labelledby="adminConfirmTitle">
+      <h3 id="adminConfirmTitle">تأكيد العملية</h3>
+      <p id="adminConfirmMessage">هل تريد المتابعة؟</p>
+      <div class="admin-confirm-actions">
+        <button type="button" class="btn" id="btnConfirmCancel">إلغاء</button>
+        <button type="button" class="btn" id="btnConfirmAccept" data-tone="danger">متابعة</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="/admin/admin.js"></script>
+</body>
+</html>

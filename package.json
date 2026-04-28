@@ -1,0 +1,28 @@
+{
+  "name": "nouna-food",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "setup:db": "node ./scripts/setup-supabase.mjs",
+    "prebuild": "node ./scripts/ensure-supabase-ready.mjs",
+    "migrate:site-settings": "node ./scripts/run-migration.mjs ./migrations/20260425_create_site_settings.sql",
+    "dev": "vite --port=3000 --host=0.0.0.0",
+    "dev:full": "npm run setup:db && npm run dev",
+    "build": "vite build",
+    "preview": "vite preview --host=0.0.0.0 --port=4173",
+    "clean": "node -e \"require('fs').rmSync('dist',{recursive:true,force:true})\"",
+    "lint": "node --check admin/admin.js && node --check js/app.js && node --check scripts/setup-supabase.mjs && node --check scripts/run-migration.mjs && node --check scripts/ensure-supabase-ready.mjs"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.104.1"
+  },
+  "devDependencies": {
+    "dotenv": "^17.2.3",
+    "pg": "^8.16.3",
+    "vite": "^6.2.0"
+  }
+}

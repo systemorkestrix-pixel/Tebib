@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' https: data: blob:; connect-src 'self' https: wss:; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <title>STORE</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <header class="hero" id="heroSection">
+    <div class="hero-overlay"></div>
+    <div class="hero-content"></div>
+  </header>
+
+  <section class="social-links" id="socialLinks" hidden aria-label="روابط السوشيال ميديا"></section>
+
+  <section class="service-area-banner" id="serviceAreaBanner" hidden>
+    <div class="service-area-copy">
+      <strong id="serviceAreaTitle">نطاق الخدمة</strong>
+      <p id="serviceAreaText">الخدمة متاحة داخل نطاق محدد فقط.</p>
+    </div>
+  </section>
+
+  <div class="category-bar">
+    <nav class="category-scroller" id="categoryContainer">
+      <!-- Categories will be injected here via JS -->
+    </nav>
+  </div>
+
+  <main class="products-container" id="productsContainer">
+    <!-- Products will be injected here via JS -->
+    <div class="loader">جاري التحميل...</div>
+  </main>
+
+  <div class="sticky-bottom-bar" id="stickyBottomBar" hidden></div>
+
+  <div class="site-toast-stack" id="siteToastStack" aria-live="polite" aria-atomic="true"></div>
+
+  <div class="order-modal hidden" id="orderModal" aria-hidden="true">
+    <div class="order-modal-backdrop" data-close-order-modal="true"></div>
+    <div class="order-modal-surface" role="dialog" aria-modal="true" aria-labelledby="orderModalTitle">
+      <div class="order-modal-header">
+        <div>
+          <h2 id="orderModalTitle">طلب المنتج</h2>
+          <p id="orderModalSubtitle">أدخل المعلومات الأساسية لإرسال الطلب مباشرة إلى اللوحة.</p>
+        </div>
+        <button type="button" class="order-modal-close" id="btnCloseOrderModal" aria-label="إغلاق">
+          ×
+        </button>
+      </div>
+
+      <div class="order-product-summary" id="orderProductSummary">
+        <strong id="orderProductName">اسم المنتج</strong>
+        <span id="orderProductMeta">0 د.ج</span>
+      </div>
+
+      <form class="order-form" id="orderForm">
+        <input type="hidden" id="orderProductId">
+
+        <label class="order-field">
+          <span>الاسم</span>
+          <input type="text" id="orderCustomerName" class="order-input" required placeholder="محمد علي">
+        </label>
+
+        <label class="order-field">
+          <span>رقم الهاتف</span>
+          <input type="tel" id="orderCustomerPhone" class="order-input" required dir="ltr" placeholder="+213550000000">
+        </label>
+
+        <label class="order-field">
+          <span>الكمية</span>
+          <input type="number" id="orderQuantity" class="order-input" required min="1" step="1" value="1">
+        </label>
+
+        <button type="submit" class="order-submit-btn" id="btnSubmitOrder">تأكيد الطلب</button>
+      </form>
+    </div>
+  </div>
+
+  <script type="module" src="/js/app.js"></script>
+</body>
+</html>
